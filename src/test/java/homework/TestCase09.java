@@ -1,116 +1,87 @@
 package homework;
 
-
 import POM.CartPage;
-import POM.CheckoutPage;
-import POM.LoginPage;
+import POM.HomePage;
 import driver.driverFactory;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
+/*  Verify Discount Coupon works correctly
 
-/*--------------TESTCASE08-------------------------
+Test Case Description:
 
-    *  Verify you are able to change or reorder previously added product
+1. Go to http://live.techpanda.org/
 
-    *  Test Data = QTY = 10
+2. Go to Mobile and add IPHONE to cart
 
-    Test Steps:
+3. Enter Coupon Code
 
-    1. Go to http://live.techpanda.org/
+4. Verify the discount generated
 
-    2. Click on my account link
+TestData:  Coupon Code: GURU50
 
-    3. Login in application using previously created credential
+Expected result:
 
-    4. Click on 'REORDER' link , change QTY & click Update
+1) Price is discounted by 5%
 
-    5. Verify Grand Total is changed
-
-    6. Complete Billing & Shipping Information
-
-    7. Verify order is generated and note the order number
-
-    Expected outcomes:
-
-    1) Grand Total is Changed
-
-    2) Order number is generated
 */
 public class TestCase09 {
-    WebDriver driver = driverFactory.getChromeDriver();
-
-
     @Test
     public void TestCase09(){
+        // Web driver
         WebDriver driver = driverFactory.getChromeDriver();
 
-        String COUPON_CODE = "GURU50";
+        try{
+            /*
+             * Verify Discount Coupon works correctly
+             * */
 
-        try {
-            // Step 1
-            driver.get("http://live.techpanda.org/");
+            // 1. Go to http://live.techpanda.org/
+            driver.get("http://live.techpanda.org");
 
-            /**
-             *  Step 2: Click on �MOBILE� menu
-             */
-            WebElement moblieLink = driver.findElement(new By.ByCssSelector("body > div:nth-child(1) > div:nth-child(2) > header:nth-child(2) > div:nth-child(1) > div:nth-child(4) > nav:nth-child(1) > ol:nth-child(1) > li:nth-child(1) > a:nth-child(1)"));
-            moblieLink.click();
+            // 2. Go to Mobile and add IPHONE to cart
+            HomePage homepage = new HomePage(driver);
+            homepage.clickMobileLink();
+            homepage.addIphoneToCart();
 
-            WebElement iphone = driver.findElement(By.cssSelector(".item:first-child .actions > .btn-cart"));
-            iphone.click();
+            // 3. Enter Coupon Code
+            CartPage cartPage = new CartPage(driver);
+            // get current grand total
+            String actualTotal = cartPage.getGrandTotal();
+            System.out.println("Actual grand total: " + actualTotal);
+            // 3.1 Apply Coupon
+            String coupon = "GURU50";
+            cartPage.applyCoupon(coupon);
+            // get grand total change
+            String expectedTotal = cartPage.getGrandTotal();
+            System.out.println("Expected grand total: " + expectedTotal);
 
-            String priceBefore = driver.findElement(By.cssSelector("#shopping-cart-totals-table tfoot .price"))
-                    .getText();
+            Assert.assertNotEquals(actualTotal, expectedTotal);
 
-            // remove the $ sign and the ',' sign
 
-            Float priceBeforeFloat = Float.parseFloat(priceBefore.substring(1).replace(",", ""));
 
-            System.out.println("Price before: " + priceBeforeFloat);
+        /*  Verify Discount Coupon works correctly
 
-            WebElement couponCode = driver.findElement(By.cssSelector("#coupon_code"));
+        Test Case Description:
 
-            couponCode.sendKeys(COUPON_CODE);
+        1. Go to http://live.techpanda.org/
 
-            driver.findElement(By.cssSelector(".discount-form .button-wrapper button:first-child")).click();
+        2. Go to Mobile and add IPHONE to cart
 
-            String priceDiscount = driver
-                    .findElement(By.cssSelector("#shopping-cart-totals-table tbody tr:last-child .price")).getText();
-            // remove the -$ sign and the ',' sign
-            priceDiscount = priceDiscount.substring(2).replace(",", "");
+        3. Enter Coupon Code
 
-            Float priceDiscountFloat = Float.parseFloat(priceDiscount);
+        4. Verify the discount generated
 
-            System.out.println("Price discount: " + priceDiscountFloat);
+        TestData:  Coupon Code: GURU50
 
-            Float expectedPrice = priceBeforeFloat * 0.05f;
+        Expected result:
 
-            // check the discount price 5%
-            Assert.assertEquals(priceDiscountFloat, expectedPrice);
+        1) Price is discounted by 5%
 
-            // check the grand total after discount
-            String priceAfter = driver.findElement(By.cssSelector("#shopping-cart-totals-table tfoot .price")).getText();
-
-            System.out.println("priceBefore: " + priceBefore);
-            System.out.println("priceAfter: " + priceAfter);
-
-            Assert.assertNotEquals(priceBefore, priceAfter);
-
-            // screenshot the result
-            File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-            String png = ("D:\\FPT\\Kì 5\\SWT\\SWT301-SeleniumWebdriver-Ecommerce-main\\SWT301-SeleniumWebdriver-Ecommerce-main\\src\\test\\java\\homework\\TestCase09.png");
-            FileUtils.copyFile(scrFile, new File(png));
-
-        } catch (Exception e) {
-            Assert.fail("Test case TC09 is failed:" + e.getMessage());
+        */
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
 
         driver.quit();

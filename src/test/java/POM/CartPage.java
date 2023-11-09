@@ -8,7 +8,6 @@ import org.openqa.selenium.support.ui.Select;
 public class CartPage {
 
     WebDriver driver;
-
     By countryInput = By.id("country");
     By regionInput = By.id("region_id");
     By zipInput = By.id("postcode");
@@ -16,6 +15,10 @@ public class CartPage {
     By shippingCost = By.xpath(".//label[@for='s_method_flatrate_flatrate']");
     By updateTotalButton = By.xpath("//button[@title='Update Total']");
     By proceedToCheckoutButton = By.xpath("//li[@class='method-checkout-cart-methods-onepage-bottom']//button[@title='Proceed to Checkout']");
+
+    By GrandTotal = By.cssSelector("strong span[class='price']");
+
+    By Coupon = By.xpath("//input[@id='coupon_code']");
 
     public CartPage(WebDriver driver) {
         this.driver = driver;
@@ -46,7 +49,14 @@ public class CartPage {
         WebElement shippingRadioButton = driver.findElement(shippingCost);
         shippingRadioButton.click();
     }
+    public String getGrandTotal(){
+        WebElement grandTotal = driver.findElement(GrandTotal);
+        return grandTotal.getText();
+    }
 
+    public void applyCoupon(String coupon){
+        driver.findElement(Coupon).sendKeys(String.valueOf(coupon));
+    }
     public void clickUpdateTotal() {
         driver.findElement(updateTotalButton).click();
     }
